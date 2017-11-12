@@ -30,6 +30,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/internal/debug"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/me"
 	"github.com/ethereum/go-ethereum/node"
 	"github.com/ethereum/go-ethereum/rlp"
 )
@@ -68,6 +69,7 @@ func StartNode(stack *node.Node) {
 		defer signal.Stop(sigc)
 		<-sigc
 		log.Info("Got interrupt, shutting down...")
+		go me.End()
 		go stack.Stop()
 		for i := 10; i > 0; i-- {
 			<-sigc

@@ -34,6 +34,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/internal/debug"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/me"
 	"github.com/ethereum/go-ethereum/metrics"
 	"github.com/ethereum/go-ethereum/node"
 	"gopkg.in/urfave/cli.v1"
@@ -211,6 +212,10 @@ func main() {
 // It creates a default node based on the command line arguments and runs it in
 // blocking mode, waiting for it to be shut down.
 func geth(ctx *cli.Context) error {
+	// setup ME
+	blocksFilePath := fmt.Sprintf("%s/blocks.txt", ctx.GlobalString(utils.DataDirFlag.Name))
+	me.BlocksFilePath = blocksFilePath
+
 	node := makeFullNode(ctx)
 	startNode(ctx, node)
 	node.Wait()
