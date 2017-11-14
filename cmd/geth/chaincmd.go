@@ -38,6 +38,7 @@ import (
 	"github.com/ethereum/go-ethereum/trie"
 	"github.com/syndtr/goleveldb/leveldb/util"
 	"gopkg.in/urfave/cli.v1"
+	"github.com/ethereum/go-ethereum/me"
 )
 
 var (
@@ -166,6 +167,9 @@ func initGenesis(ctx *cli.Context) error {
 			utils.Fatalf("Failed to open database: %v", err)
 		}
 		_, hash, err := core.SetupGenesisBlock(chaindb, genesis)
+
+		me.Log("Creating genesis block", "hash", hash)
+
 		if err != nil {
 			utils.Fatalf("Failed to write genesis block: %v", err)
 		}
