@@ -408,6 +408,10 @@ func (self *worker) commitNewWork() {
 		time.Sleep(wait)
 	}
 
+	// ME: should adjust header to previously saved blocks
+	// especially time
+	var period  int64 = 60 // lets pretend that blocks are created every 60 seconds since genesis, which is 0
+
 	num := parent.Number()
 	header := &types.Header{
 		ParentHash: parent.Hash(),
@@ -415,7 +419,7 @@ func (self *worker) commitNewWork() {
 		GasLimit:   core.CalcGasLimit(parent),
 		GasUsed:    new(big.Int),
 		Extra:      self.extra,
-		Time:       big.NewInt(tstamp),
+		Time:       new(big.Int).Add(parent.Time(), big.NewInt(period)),
 	}
 	// Only set the coinbase if we are mining (avoid spurious block rewards)
 	if atomic.LoadInt32(&self.mining) == 1 {
