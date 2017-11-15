@@ -57,8 +57,8 @@ func (ethash *Ethash) Seal(chain consensus.ChainReader, block *types.Block, stop
 		ethash.rand = rand.New(rand.NewSource(seed.Int64()))
 	}
 	ethash.lock.Unlock()
-	// ME: here we alter mining process. Since we want to resulting blocks to be deterministic
-	// we need to make sure that the same block with the same number in different run must have
+	// ME: here we alter mining process. Since we want the resulting blocks to be deterministic
+	// we need to make sure that the same block with the same number in different runs must have
 	// the same nonce.
 	// So we are changing threads to 1 and nonce seed to 0
 	threads = 1
