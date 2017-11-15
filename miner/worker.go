@@ -386,6 +386,7 @@ func (self *worker) makeCurrent(parent *types.Block, header *types.Header) error
 	return nil
 }
 
+// ME: TODO: need to load uncles and transaction from replayed blocks
 func (self *worker) commitNewWork() {
 	self.mu.Lock()
 	defer self.mu.Unlock()
@@ -408,10 +409,9 @@ func (self *worker) commitNewWork() {
 		time.Sleep(wait)
 	}
 
-	// ME: should adjust header to previously saved blocks
-	// especially time
-	var period  int64 = 60 // lets pretend that blocks are created every 60 seconds since genesis, which is 0
-
+	// ME: change the way time is computed. use period since parent timestamp, which is 0, to make
+	// it deterministic in different runs
+	var period int64 = 60 // lets pretend that blocks are created every 60
 	num := parent.Number()
 	header := &types.Header{
 		ParentHash: parent.Hash(),
