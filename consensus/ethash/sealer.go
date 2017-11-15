@@ -21,7 +21,6 @@ import (
 	"math"
 	"math/big"
 	"math/rand"
-	"runtime"
 	"sync"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -58,19 +57,19 @@ func (ethash *Ethash) Seal(chain consensus.ChainReader, block *types.Block, stop
 		ethash.rand = rand.New(rand.NewSource(seed.Int64()))
 	}
 	ethash.lock.Unlock()
-	if threads == 0 {
-		threads = runtime.NumCPU()
-	}
-	if threads < 0 {
-		threads = 0 // Allows disabling local mining without extra logic around local/remote
-	}
+	// ME: here we alter mining process. Since we want to resulting blocks to be deterministic
+	// we need to make sure that the same block with the same number in different run must have
+	// the same nonce.
+	// So we are changing threads to 1 and nonce seed to 0
+	threads = 1
+	seed := 0
 	var pend sync.WaitGroup
 	for i := 0; i < threads; i++ {
 		pend.Add(1)
 		go func(id int, nonce uint64) {
 			defer pend.Done()
 			ethash.mine(block, id, nonce, abort, found)
-		}(i, uint64(ethash.rand.Int63()))
+		}(i, uint64(seed))
 	}
 	// Wait until sealing is terminated or a nonce is found
 	var result *types.Block
